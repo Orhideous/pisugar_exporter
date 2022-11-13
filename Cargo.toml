@@ -1,0 +1,30 @@
+[package]
+name = "pisugar_exporter"
+version = "0.1.0"
+authors = ["Andriy Kushnir (Orhideous) <me@orhideous.name>"]
+description = "Simple service to expose battery stats for Prometheus"
+homepage = "https://github.com/Orhideous/pisugar_exporter"
+readme = "README.md"
+keywords = [
+    "pisugar",
+    "prometheus",
+    "exporter",
+]
+license = "MIT OR Apache-2.0"
+repository = "https://github.com/Orhideous/pisugar_exporter"
+edition = "2021"
+
+[dependencies]
+anyhow = "1"
+clap = { version = "4.0", features = ["derive", "env"] }
+lazy_static = "1.4"
+prometheus = "0.13"
+prometheus-hyper = "0.1"
+regex = { version = "1.7", default-features = false, features=["std", "perf"] }
+tokio = { version = "1.21", features = ["rt-multi-thread", "macros", "net", "io-util"] }
+tracing = "0.1"
+tracing-subscriber = { version = "0.3", features = ["env-filter"] }
+
+[profile.release]
+strip = true
+lto = true
