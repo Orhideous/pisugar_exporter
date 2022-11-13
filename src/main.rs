@@ -153,16 +153,18 @@ async fn main() -> Result<()> {
     });
 
     tokio::spawn(async move {
-        match fetch_stats(SocketAddr::from((config.pisugar_host, config.pisugar_port))).await {
-            Ok(stats) => {
-                debug!(?stats, "Received battery stats");
-                metrics.battery.set(stats.battery);
-                metrics.voltage.set(stats.voltage);
-                metrics.current.set(stats.current);
-            }
-            Err(error) => error!(%error, "Failed to update metrics"),
-        };
-        sleep(Duration::from_secs(config.poll_frequency)).await;
+        loop {
+            match fetch_stats(SocketAddr::from((config.pisugar_host, config.pisugar_port))).await {
+                Ok(stats) => {
+                    debug!(?stats, "Received battery stats");
+                    metrics.battery.set(stats.battery);
+                    metrics.voltage.set(stats.voltage);
+                    metrics.current.set(stats.current);
+                }
+                Err(error) => error!(%error, "Failed to update metrics"),
+            };
+            sleep(Duration::from_secs(config.poll_frequency)).await;
+        }
     });
 
     match tokio::signal::ctrl_c().await {
